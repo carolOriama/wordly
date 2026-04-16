@@ -1,0 +1,163 @@
+
+:root {
+    --mint-green: #A8D8B9;    
+    --soft-beige: #F0E3D7;    
+    --sage-muted: #B7C9B2;    
+    --forest-green: #4A7C2A;  
+    --off-white-green: #D1E8D2; 
+    --text-charcoal: #2F3E26; 
+}
+
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+body {
+    background-color: var(--off-white-green);
+    color: var(--text-charcoal);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+}
+
+
+.app-header {
+    background-color: var(--mint-green);
+    border-bottom: 2px solid var(--sage-muted);
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+}
+
+.header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    color: var(--forest-green);
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+}
+
+
+.search-box {
+    display: flex;
+    background: white;
+    padding: 8px;
+    border-radius: 50px;
+    border: 2px solid var(--sage-muted);
+    box-shadow: 0 4px 15px rgba(47, 62, 38, 0.05);
+    transition: 0.3s ease;
+}
+
+.search-box:focus-within {
+    border-color: var(--forest-green);
+    box-shadow: 0 4px 20px rgba(74, 124, 42, 0.1);
+}
+
+#word-input {
+    flex-grow: 1;
+    background: transparent;
+    border: none;
+    padding: 12px 20px;
+    color: var(--text-charcoal);
+    font-size: 1rem;
+    outline: none;
+}
+
+.btn-primary {
+    background-color: var(--forest-green);
+    color: white;
+    border: none;
+    padding: 0 30px;
+    border-radius: 40px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #3b6321;
+}
+
+
+.meaning-card {
+    background: white;
+    margin-top: 1.5rem;
+    padding: 2rem;
+    border-radius: 18px;
+    border-bottom: 4px solid var(--soft-beige);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+}
+
+.word-title {
+    font-size: 3rem;
+    color: var(--forest-green);
+    margin-bottom: 0.5rem;
+}
+
+.phonetic-spelling {
+    color: var(--sage-muted);
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.part-of-speech-tag {
+    background-color: var(--soft-beige);
+    color: var(--forest-green);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+
+.definition-item {
+    margin: 1.5rem 0;
+    padding-left: 1rem;
+    border-left: 2px solid var(--soft-beige);
+}
+
+.example-text {
+    color: #6a7c61;
+    font-style: italic;
+    font-size: 0.95rem;
+    margin-top: 5px;
+}
+
+.btn-save {
+    background: none;
+    border: 1px solid var(--sage-muted);
+    color: var(--sage-muted);
+    padding: 6px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-save:hover {
+    color: var(--forest-green);
+    border-color: var(--forest-green);
+    background-color: var(--off-white-green);
+}
+
+.synonym-chips .chip {
+    display: inline-block;
+    background: var(--mint-green);
+    color: var(--forest-green);
+    padding: 4px 12px;
+    border-radius: 4px;
+    margin: 4px;
+    font-size: 0.85rem;
+}
