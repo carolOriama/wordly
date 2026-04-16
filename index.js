@@ -19,13 +19,13 @@ async function getWordData(word) {
 
     const data = await response.json();
 
-    renderResult(data[0]);
+    displayResult(data[0]);
   } catch (error) {
-    renderError(error.message);
+    displayError(error.message);
   }
 }
 
-function renderResult(entry) {
+function displayResult(entry) {
   const word = entry.word;
   const phonetic =
     entry.phonetic || entry.phonetics?.find((p) => p.text)?.text || "";
@@ -60,7 +60,7 @@ function playAudio(url) {
   phoneticAudio.play();
 }
 
-function renderError(message) {
+function displayError(message) {
   resultContainer.innerHTML = `
         <div class="error-state">
             <p>Oops! ${message}</p>
