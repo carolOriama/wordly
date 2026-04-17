@@ -17,31 +17,38 @@
             </div>
         </header>
 
-        <main>
-            <section class="search-box">
-                <form id="search-form" aria-label="Search Dictionary">
-                    <div class="input-wrapper">
-                        <input type="text" id="search-input" placeholder="Discover a new word..." aria-label="Word to search" required>
-                        <button type="submit" aria-label="Submit search">Search</button>
+        <main class="layout-grid">
+            <div class="main-column">
+                <section class="search-box">
+                    <form id="search-form" aria-label="Search Dictionary">
+                        <div class="input-wrapper">
+                            <input type="text" id="search-input" placeholder="Discover a new word..." aria-label="Word to search" required>
+                            <button type="submit" aria-label="Submit search">Search</button>
+                        </div>
+                    </form>
+                </section>
+
+                <section id="error-message" class="hidden" aria-live="polite"></section>
+
+                <section id="results" class="hidden" aria-live="polite">
+                    <div class="result-header">
+                        <div class="word-info">
+                            <h2 id="word-title"></h2>
+                            <p id="word-phonetic"></p>
+                        </div>
+                        <button id="play-btn" aria-label="Play Pronunciation">
+                            <span class="icon">🔊</span> Listen
+                        </button>
                     </div>
-                </form>
-            </section>
 
-            <section id="error-message" class="hidden" aria-live="polite"></section>
+                    <div id="meanings"></div>
+                </section>
+            </div>
 
-            <section id="results" class="hidden" aria-live="polite">
-                <div class="result-header">
-                    <div class="word-info">
-                        <h2 id="word-title"></h2>
-                        <p id="word-phonetic"></p>
-                    </div>
-                    <button id="play-btn" aria-label="Play Pronunciation">
-                        <span class="icon">🔊</span> Listen
-                    </button>
-                </div>
-
-                <div id="meanings"></div>
-            </section>
+            <aside id="saved-sidebar" class="saved-sidebar">
+                <h3>Saved Words</h3>
+                <div id="saved-words-list"></div>
+            </aside>
         </main>
     </div>
 </body>

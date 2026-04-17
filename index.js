@@ -115,4 +115,67 @@ window.toggleSave = function (btnElement, safeWord, safeDef) {
 
   localStorage.setItem("wordly_saved", JSON.stringify(savedWords));
   savedBtnTop.textContent = `Saved (${savedWords.length})`;
+  displaySavedSidebar();
 };
+
+function displaySavedSidebar() {
+  const sidebarList = document.getElementById("saved-words-list");
+  if (!sidebarList) return;
+
+  if (savedWords.length === 0) {
+    sidebarList.innerHTML =
+      "<p style='color: var(--text-light); text-align: center; margin-top: 1rem;'>No saved words yet.</p>";
+    return;
+  }
+
+  sidebarList.innerHTML = savedWords
+    .map((saved) => {
+      const safeWord = encodeURIComponent(saved.word);
+      const safeDef = encodeURIComponent(saved.definition);
+      return `
+      <div class="saved-item" onclick="this.classList.toggle('expanded'); this.querySelector('.saved-definition').classList.toggle('hidden')">
+        <div class="saved-word-toggle">
+          <h4>${saved.word}</h4>
+          <div class="action-buttons">
+            <span class="expand-indicator"></span>
+            <button class="remove-saved-btn" onclick="removeSavedSidebarItem(event, '${safeWord}', '${safeDef}')" aria-label="Remove saved word">&times;</button>
+          </div>
+        </div>
+        <p class="saved-definition hidden">${saved.definition}</p>
+      </div>
+    `;
+    })
+    .join("");
+}
+
+window.removeSavedSidebarItem = function (event, safeWord, safeDef) {
+  event.stopPropagation();
+  const word = decodeURIComponent(safeWord);
+  const definition = decodeURIComponent(safeDef);
+
+  const index = savedWords.findIndex(
+    (w) => w.word === word && w.definition === definition,
+  );
+
+  if (index > -1) {
+    savedWords.splice(index, 1);
+    localStorage.setItem("wordly_saved", JSON.stringify(savedWords));
+    savedBtnTop.textContent = `Saved (${savedWords.length})`;
+    displaySavedSidebar();
+
+    const btns = document.querySelectorAll(".save-btn");
+    btns.forEach((btn) => {
+      if (
+        btn.getAttribute("onclick") &&
+        btn.getAttribute("onclick").includes(safeDef)
+      ) {
+        btn.classList.remove("is-saved");
+        btn.textContent = "Save ";
+        btn.setAttribute("aria-label", "Save ");
+      }
+    });
+  }
+};
+
+// Initial render
+displaySavedSidebar();
