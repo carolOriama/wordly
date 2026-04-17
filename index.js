@@ -1,96 +1,118 @@
-const dictionaryForm = document.getElementById("dictionary-form");
-const wordInput = document.getElementById("word-input");
-const resultContainer = document.getElementById("result-container");
-const phoneticAudio = document.getElementById("phonetic-audio");
-const savedCountBtn = document.getElementById("saved-count-btn");
+const searchForm = document.getElementById("search-form");
+const searchInput = document.getElementById("search-input");
+const resultsDiv = document.getElementById("results");
+const errorDiv = document.getElementById("error-message");
+const meaningsDiv = document.getElementById("meanings");
+const playBtn = document.getElementById("play-btn");
+const savedBtnTop = document.getElementById("saved-btn");
 
-async function getWordData(word) {
+let currentAudio = null;
+let savedWords = JSON.parse(localStorage.getItem("wordly_saved")) || [];
+
+savedBtnTop.textContent = `Saved (${savedWords.length})`;
+
+searchForm.addEventListener("submit", async function (e) {
+  e.preventDefault();
+  const word = searchInput.value;
+
+  resultsDiv.classList.add("hidden");
+  errorDiv.classList.add("hidden");
+
   try {
-    resultContainer.innerHTML =
-      '<p class="loading">Searching for "' + word + '"...</p>';
-
     const response = await fetch(
-      `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
+      "https://api.dictionaryapi.dev/api/v2/entries/en/" + word,
     );
+    if (!response.ok) throw new Error("Word not found.");
 
-    if (!response.ok) {
-      throw new Error("Word not found. Please try another search.");
+    const dataArray = await response.json();
+    displayWord(dataArray[0]);
+  } catch (error) {
+    errorDiv.innerHTML = `<h3>Word Not Found</h3><p>${error.message}</p>`;
+    errorDiv.classList.remove("hidden");
+  }
+});
+
+function displayWord(data) {
+  document.getElementById("word-title").textContent = data.word;
+  document.getElementById("word-phonetic").textContent = data.phonetic || "";
+
+  const phoneticObj =
+    data.phonetics && data.phonetics.find((p) => p.audio !== "");
+  if (phoneticObj) {
+    currentAudio = new Audio(phoneticObj.audio);
+    playBtn.classList.remove("hidden");
+  } else {
+    currentAudio = null;
+    playBtn.classList.add("hidden");
+  }
+
+  meaningsDiv.innerHTML = "";
+
+  data.meanings.forEach((meaning) => {
+    let definitionsHtml = "";
+
+    meaning.definitions.forEach((def, index) => {
+      const isSaved = savedWords.some(
+        (w) => w.word === data.word && w.definition === def.definition,
+      );
+
+      const safeWord = encodeURIComponent(data.word);
+      const safeDef = encodeURIComponent(def.definition);
+
+      const buttonClass = isSaved ? "save-btn is-saved" : "save-btn";
+      const buttonText = isSaved ? "Saved " : "Save ";
+      const ariaLabelText = isSaved ? "Unsave " : "Save ";
+
+      definitionsHtml += `
+        <div class="definition-item">
+            <p><strong>${index + 1}.</strong> ${def.definition}</p>
+            ${def.example ? `<p class="example">"${def.example}"</p>` : ""}
+            <button class="${buttonClass}" aria-label="${ariaLabelText}" onclick="toggleSave(this, '${safeWord}', '${safeDef}')">${buttonText}</button>
+        </div>
+      `;
+    });
+
+    let synonymsHtml = "";
+    if (meaning.synonyms && meaning.synonyms.length > 0) {
+      synonymsHtml = `<p class="synonyms">Synonyms: ${meaning.synonyms.join(", ")}</p>`;
     }
 
-    const data = await response.json();
-
-    displayResult(data[0]);
-  } catch (error) {
-    displayError(error.message);
-  }
-}
-
-function displayResult(entry) {
-  const word = entry.word;
-  const phonetic =
-    entry.phonetic || entry.phonetics?.find((p) => p.text)?.text || "";
-  const audioUrl = entry.phonetics?.find((p) => p.audio)?.audio || "";
-  const meanings = entry.meanings || [];
-
-  const definitionsHtml = meanings
-    .map((meaning) => {
-      const defs = meaning.definitions
-        .map((def) => `<li>${def.definition}</li>`)
-        .join("");
-      return `
-        <div class="meaning-card">
-          <h3>${meaning.partOfSpeech}</h3>
-          <ul>${defs}</ul>
-        </div>`;
-    })
-    .join("");
-
-  resultContainer.innerHTML = `
-    <div class="result-header">
-      <h2>${word}</h2>
-      <p class="phonetic">${phonetic}</p>
-      ${audioUrl ? `<button class="btn-primary" onclick="playAudio('${audioUrl}')">Play Pronunciation</button>` : ""}
-    </div>
-    <div class="meanings">${definitionsHtml}</div>
-  `;
-}
-
-function playAudio(url) {
-  phoneticAudio.src = url;
-  phoneticAudio.play();
-}
-
-function displayError(message) {
-  resultContainer.innerHTML = `
-        <div class="error-state">
-            <p>Oops! ${message}</p>
-        </div>
+    meaningsDiv.innerHTML += `
+      <div class="meaning-card">
+        <span class="part-of-speech">${meaning.partOfSpeech}</span>
+        ${definitionsHtml}
+        ${synonymsHtml}
+      </div>
     `;
+  });
+
+  resultsDiv.classList.remove("hidden");
 }
 
-function updateSavedCount() {
-  const favorites = JSON.parse(localStorage.getItem("wordly_favorites")) || [];
-  const countBtn = document.getElementById("saved-count-btn");
-
-  countBtn.innerText = `Saved (${favorites.length})`;
-}
-
-updateSavedCount();
-
-dictionaryForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const query = wordInput.value.trim();
-  if (query) {
-    getWordData(query);
-  }
+playBtn.addEventListener("click", () => {
+  if (currentAudio) currentAudio.play();
 });
 
-savedCountBtn.addEventListener("click", () => {
-  const favorites = JSON.parse(localStorage.getItem("wordly_favorites")) || [];
+window.toggleSave = function (btnElement, safeWord, safeDef) {
+  const word = decodeURIComponent(safeWord);
+  const definition = decodeURIComponent(safeDef);
 
-  if (favorites.length === 0) {
-    alert("You haven't saved any words yet!");
+  const index = savedWords.findIndex(
+    (w) => w.word === word && w.definition === definition,
+  );
+
+  if (index > -1) {
+    savedWords.splice(index, 1);
+    btnElement.classList.remove("is-saved");
+    btnElement.textContent = "Save";
+    btnElement.setAttribute("aria-label", "Save ");
   } else {
-    alert("Your saved words: " + favorites.join(", "));
+    savedWords.push({ word, definition });
+    btnElement.classList.add("is-saved");
+    btnElement.textContent = "Saved ";
+    btnElement.setAttribute("aria-label", "Unsave ");
   }
-});
+
+  localStorage.setItem("wordly_saved", JSON.stringify(savedWords));
+  savedBtnTop.textContent = `Saved (${savedWords.length})`;
+};

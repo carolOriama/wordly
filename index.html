@@ -3,35 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wordly</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Wordly | Premium Dictionary</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="index.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Wordly</h1>
-        <button id="saved-btn">Saved (0)</button>
-    </header>
+    <div class="app-background"></div>
+    <div class="max-width-wrapper">
+        <header class="glass-header">
+            <div class="header-content">
+                <h1>Wordly</h1>
+                <button id="saved-btn" aria-label="View Saved Words">Saved (0)</button>
+            </div>
+        </header>
 
-    <main>
-        <section class="search-box">
-            <form id="search-form">
-                <input type="text" id="search-input" placeholder="Search for a word..." required>
-                <button type="submit">Search</button>
-            </form>
-        </section>
+        <main>
+            <section class="search-box">
+                <form id="search-form" aria-label="Search Dictionary">
+                    <div class="input-wrapper">
+                        <input type="text" id="search-input" placeholder="Discover a new word..." aria-label="Word to search" required>
+                        <button type="submit" aria-label="Submit search">Search</button>
+                    </div>
+                </form>
+            </section>
 
-        <section id="error-message" class="hidden"></section>
+            <section id="error-message" class="hidden" aria-live="polite"></section>
 
-        <section id="results" class="hidden">
-            <h2 id="word-title"></h2>
-            <p id="word-phonetic"></p>
-            <button id="play-btn">🔊 Play</button>
+            <section id="results" class="hidden" aria-live="polite">
+                <div class="result-header">
+                    <div class="word-info">
+                        <h2 id="word-title"></h2>
+                        <p id="word-phonetic"></p>
+                    </div>
+                    <button id="play-btn" aria-label="Play Pronunciation">
+                        <span class="icon">🔊</span> Listen
+                    </button>
+                </div>
 
-           
-            <div id="meanings"></div>
-        </section>
-    </main>
-
-    <script src="script.js"></script>
+                <div id="meanings"></div>
+            </section>
+        </main>
+    </div>
 </body>
 </html>
