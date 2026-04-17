@@ -177,5 +177,4 @@ window.removeSavedSidebarItem = function (event, safeWord, safeDef) {
   }
 };
 
-// Initial render
 displaySavedSidebar();
